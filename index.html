@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Калькулятор</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 360px;
+            margin: 20px auto;
+            padding: 14px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (min-width: 500px) {
+            .container {
+                max-width: 420px;
+            }
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 18px;
+            margin: 8px 0 12px;
+        }
+
+        .inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        input {
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            text-align: center;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+            transform: scale(1.03);
+        }
+
+        .results {
+            display: grid;
+            gap: 6px;
+        }
+
+        .results div {
+            display: flex;
+            justify-content: space-between;
+            background: #f1f3f5;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .results div.updated {
+            background: #d4edda;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 11px;
+            margin-top: 12px;
+            color: #777;
+        }
+
+        footer hr {
+            margin: 8px 0;
+            border: none;
+            border-top: 1px solid #ddd;
+        }
+
+        .clear-btn {
+            padding: 8px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #ff5c5c;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .clear-btn:hover {
+            background: #ff3b3b;
+        }
+
+        .clear-btn:active {
+            transform: scale(0.95);
+        }
+
+        .theme-btn {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 6px;
+            border: none;
+            border-radius: 8px;
+            background: #333;
+            color: white;
+            cursor: pointer;
+        }
+
+        .dark body {
+            background: #121212;
+            color: white;
+        }
+
+        .dark .container {
+            background: #1e1e1e;
+        }
+
+        .dark input {
+            background: #2a2a2a;
+            color: white;
+            border: 1px solid #444;
+        }
+
+        .dark .results div {
+            background: #2a2a2a;
+        }
+
+        .dark footer {
+            color: #aaa;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+        <button class="theme-btn">🌙 Тема</button>
+        <h1>⚡ Калькулятор энергии</h1>
+
+        <div class="inputs">
+            <input type="number" placeholder="02">
+            <input type="number" placeholder="04">
+            <input type="number" placeholder="06">
+            <input type="number" placeholder="08">
+            <input type="number" placeholder="10">
+        </div>
+
+        <div class="results">
+            <div>Единицы всего <output class="unit_oll">0</output></div>
+            <div>Еденицы на секцию <output class="unit_section">0</output></div>
+            <div>кВт всего <output class="kwt_oll">0</output></div>
+            <div>кВт на секцию <output class="kwt_section">0</output></div>
+        </div>
+
+        <button class="clear-btn">Очистить</button>
+
+        <footer>
+            <hr>
+            2026 © Roman Zavidov
+        </footer>
+    </div>
+
+    <script>
+        const inputs = document.querySelectorAll('input');
+
+        const vibrate = (ms = 30) => {
+            if (navigator.vibrate) {
+                navigator.vibrate(ms);
+            }
+        };
+
+        const calculate = () => {
+            const values = [];
+
+            inputs.forEach(input => {
+                values.push(Number(input.value) || 0);
+            });
+
+            const unit_oll = values.reduce((sum, val) => sum + val, 0);
+            const n_section = values.filter(val => val > 0).length;
+
+            const unit_section = n_section ? unit_oll / n_section : 0;
+            const kwt_oll = (unit_oll * 166) / 10;
+            const kwt_section = n_section ? kwt_oll / n_section : 0;
+
+            document.querySelector('.unit_oll').textContent = unit_oll;
+            document.querySelector('.unit_section').textContent = unit_section.toFixed(2);
+            document.querySelector('.kwt_oll').textContent = kwt_oll.toFixed(2);
+            document.querySelector('.kwt_section').textContent = kwt_section.toFixed(2);
+
+            const results = document.querySelectorAll('.results div');
+
+            results.forEach(el => {
+                el.classList.add('updated');
+                setTimeout(() => el.classList.remove('updated'), 300);
+            });
+        };
+
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                calculate();
+                vibrate(10);
+            });
+        });
+
+        document.querySelector('.clear-btn').addEventListener('click', () => {
+            inputs.forEach(input => input.value = '');
+            calculate();
+            vibrate(50);
+        });
+
+        const themeBtn = document.querySelector('.theme-btn');
+
+        themeBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            vibrate(30);
+        });
+    </script>
+
+</body>
+
+</html>
