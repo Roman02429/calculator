@@ -125,26 +125,41 @@
             cursor: pointer;
         }
 
-        .dark body {
+        .dt-btn {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 6px;
+            border: none;
+            border-radius: 8px;
+            background: #333;
+            color: white;
+            cursor: pointer;
+        }
+
+        html.dark {
             background: #121212;
             color: white;
         }
 
-        .dark .container {
+        html.dark body {
+            background: #121212;
+        }
+
+        html.dark .container {
             background: #1e1e1e;
         }
 
-        .dark input {
+        html.dark input {
             background: #2a2a2a;
             color: white;
             border: 1px solid #444;
         }
 
-        .dark .results div {
+        html.dark .results div {
             background: #2a2a2a;
         }
 
-        .dark footer {
+        html.dark footer {
             color: #aaa;
         }
     </style>
@@ -154,8 +169,9 @@
 <body>
 
     <div class="container">
+        <button class="dt-btn">Конвертер дизельного топлива </button>
         <button class="theme-btn">🌙 Тема</button>
-        <h1>⚡ Калькулятор энергии</h1>
+        <h1>⚡ Калькулятор э/э для МВПС</h1>
 
         <div class="inputs">
             <input type="number" placeholder="02">
@@ -182,12 +198,6 @@
 
     <script>
         const inputs = document.querySelectorAll('input');
-
-        const vibrate = (ms = 30) => {
-            if (navigator.vibrate) {
-                navigator.vibrate(ms);
-            }
-        };
 
         const calculate = () => {
             const values = [];
@@ -219,21 +229,24 @@
         inputs.forEach(input => {
             input.addEventListener('input', () => {
                 calculate();
-                vibrate(10);
             });
         });
 
         document.querySelector('.clear-btn').addEventListener('click', () => {
             inputs.forEach(input => input.value = '');
             calculate();
-            vibrate(50);
         });
 
         const themeBtn = document.querySelector('.theme-btn');
 
         themeBtn.addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
-            vibrate(30);
+        });
+
+        const dtBtn = document.querySelector('.dt-btn');
+
+        dtBtn.addEventListener('click', () => {
+            window.open('https://roman02429.github.io/calculator/', '_blank');
         });
     </script>
 
